@@ -177,5 +177,11 @@ app.patch('/users/evals/:id', async (req, res) => {
   }
 })
 
+app.post('/users/login', (req, res) => {
+  const {email, password} = req.body;
+
+  U
+})
+
 // app.delete (STRETCH GOAL for adding an adminstrator role)
 
