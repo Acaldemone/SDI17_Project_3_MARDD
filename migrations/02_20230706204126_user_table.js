@@ -4,7 +4,7 @@
  */
 exports.up = function(knex) {
     return knex.schema.createTable('users', table => {
-        table.integer('id').primary();
+        table.bigint('id').primary();
         table.string('last_name');
         table.string('first_name');
         table.string('email');
