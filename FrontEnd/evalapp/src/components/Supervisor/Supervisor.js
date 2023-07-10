@@ -5,6 +5,7 @@ import Dropdown from './Dropdown.js'
 
 export default function Supervisor({ user }) {
   const [evalList, setEvalList] = useState([]);
+  const [troops, setTroops]= useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:8080/users/evals/${user.id}`)
@@ -16,6 +17,9 @@ export default function Supervisor({ user }) {
       .catch(error => {
         console.error("Error fetching evaluation list:", error);
       });
+
+      fetch(`http://localhost:8080/users/troops/${user.id}`)
+
   }, [user.id]);
 
   const UserContent = () => {
@@ -41,7 +45,7 @@ export default function Supervisor({ user }) {
               <div className='flex justify-center h-screen'>
                 <div className='flex evalContainer mt-20 h-fit'>
                   <Card>
-                    <h2 className="text-4xl font-extrabold dark:text-white text-center mb-5">Last Evaluation</h2>
+                    <h2 className="text-4xl font-extrabold dark:text-white text-center mb-5">Recent Evaluation</h2>
                     <p>Ratee Role: Supervisory</p>
                     <p>DOD ID Number: {evalList[0].user_id}</p>
                     <p>Work performance rating: {evalList[0].work_performance}</p>
@@ -54,7 +58,7 @@ export default function Supervisor({ user }) {
                     <p>Self improvement comments: {evalList[0].self_improvement_comments}</p>
                     <p>Fitness Test: {evalList[0].passing_fitness ? 'Pass' : 'Fail'}</p>
                     <p>Fitness comments: {evalList[0].fitness_comments}</p>
-                    <p>Date of last evaluation: {lastEvalDate.toDateString()}</p>
+                    <p>Date of evaluation: {lastEvalDate.toDateString()}</p>
                   </Card>
                 </div>
                 <div className='ml-40 mt-20 h-screen'>
