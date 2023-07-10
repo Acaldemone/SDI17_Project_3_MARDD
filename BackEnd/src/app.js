@@ -1,21 +1,35 @@
-const e = require('express');
 const express = require('express');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const https = require('https');
+const fs = require('fs');
+const jwt = require('jsonwebtoken');
 const app = express();
 const port = 8080;
 
+require('dotenv').config();
+
+const options = {
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem')
+};
+
 app.use(express.json());
+app.use(cors())
 const knex = require('knex')(require('../../knexfile.js') ['development'])
+
+const server = https.createServer(options, app)
+
+server.listen(port, () => {
+  console.log('Your Knex and Express application are running successfully!')
+})
 
 app.get('/', (req, res) => {
   res.send('Application is running!')
 })
 
-app.listen(port, () => {
-  console.log('Your Knex and Express application are running successfully!')
-})
-
 app.get('/users/:id', async (request, response) => {
-  const {id} = request.params;
+  const {id} = request.params
   try{
   const user = await knex('users')
     .select('*')
@@ -28,14 +42,16 @@ app.get('/users/:id', async (request, response) => {
 })
 
 app.post('/register/createUser', async (req, res) => {
-  const { id, last_name, first_name, email } = req.body;
+  const { id, last_name, first_name, email, password } = req.body;
 
+  const hashedPass = await bcrypt.hashSync(password, 10)
   try {
     const newUser = {
       id: BigInt(id),
       last_name: last_name,
       first_name: first_name,
-      email: email
+      email: email,
+      password: hashedpass
     };
 
     const addedUser = await knex('users')
@@ -54,7 +70,7 @@ app.patch('/users/:id', async (req, res) => {
 
   try{
     const userToUpdate = {}
-    
+
     if (last_name) userToUpdate.last_name = last_name;
     if (first_name) userToUpdate.first_name = first_name;
     if (email) userToUpdate.email = email;
@@ -79,7 +95,7 @@ app.patch('/users/:id', async (req, res) => {
 
 app.get('/users/evals/:id', async (req, res) => {
   const {id} = req.params;
-  
+
   try{
     const userEvals = await knex('users')
     .join("evaluations", "users.id", "=", "evaluations.user_id")
@@ -93,30 +109,30 @@ app.get('/users/evals/:id', async (req, res) => {
 })
 
 app.post('/users/evals', async (req, res) => {
-  const {work_performance, 
-    work_performance_comments, 
-    followership_leadership, 
+  const {work_performance,
+    work_performance_comments,
+    followership_leadership,
     followership_leadership_comments,
     professional_development,
-    professional_development_comments, 
-    self_improvement, 
-    self_improvement_comments, 
+    professional_development_comments,
+    self_improvement,
+    self_improvement_comments,
     passing_fitness,
     fitness_comments,
     last_eval_date,
     user_id,
     supervisor_id} = req.body;
-    
+
     try{
       const newEval = {
         work_performance: work_performance,
-        work_performance_comments: work_performance_comments, 
-        followership_leadership: followership_leadership, 
-        followership_leadership_comments: followership_leadership_comments, 
+        work_performance_comments: work_performance_comments,
+        followership_leadership: followership_leadership,
+        followership_leadership_comments: followership_leadership_comments,
         professional_development: professional_development,
         professional_development_comments: professional_development_comments,
-        self_improvement: self_improvement, 
-        self_improvement_comments: self_improvement_comments, 
+        self_improvement: self_improvement,
+        self_improvement_comments: self_improvement_comments,
         passing_fitness: passing_fitness,
         fitness_comments: fitness_comments,
         last_eval_date: last_eval_date,
@@ -133,14 +149,14 @@ app.post('/users/evals', async (req, res) => {
 
 app.patch('/users/evals/:id', async (req, res) => {
   const {id} = req.params;
-  const {work_performance, 
-    work_performance_comments, 
-    followership_leadership, 
+  const {work_performance,
+    work_performance_comments,
+    followership_leadership,
     followership_leadership_comments,
     professional_development,
-    professional_development_comments, 
-    self_improvement, 
-    self_improvement_comments, 
+    professional_development_comments,
+    self_improvement,
+    self_improvement_comments,
     passing_fitness,
     fitness_comments,
     last_eval_date,
@@ -166,7 +182,7 @@ app.patch('/users/evals/:id', async (req, res) => {
     .where('user_id', id)
     .update(evalToUpdate)
     .returning("*");
-  
+
     if (!updatedEval.length) {
     return res.status(404).json({message: 'Evaluation not found'})
 
@@ -177,11 +193,33 @@ app.patch('/users/evals/:id', async (req, res) => {
   }
 })
 
-app.post('/users/login', (req, res) => {
-  const {email, password} = req.body;
+app.post('/login/validation', async (req, res) => {
+  const { email, password } = req.body;
 
-  U
-})
+
+  try {
+    const user = await knex('users')
+      .select('id', 'email', 'password')
+      .where('email', email)
+      .first();
+
+    if (user) {
+      const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+      if (isPasswordValid) {
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY);
+        res.status(201).json({ id: user.id, token: token });
+      } else {
+        res.status(401).json({ id: '' });
+      }
+    } else {
+      res.status(401).json({ id: '' });
+    }
+  } catch (error) {
+    console.error('An error occurred during login:', error);
+    res.status(500).json({ message: 'Error validating credentials' });
+  }
+});
 
 // app.delete (STRETCH GOAL for adding an adminstrator role)
 

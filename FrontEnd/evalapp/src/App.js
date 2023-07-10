@@ -1,14 +1,20 @@
 import UserLogin from './components/LoginPage/login.js'
-import React from 'react';
+import CreateAccountPage from './components/CreateAccountPage/createAccount.js'
+import AccountCreated from './components/CreateAccountPage/accountCreated.js'
+import UserPage from './components/UserAccountPage/UserPage.js'
+import React, {useState} from 'react';
 import './index.css'
-import { createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet, Routes, Route } from 'react-router-dom'
+import {Routes, Route } from 'react-router-dom'
 
 function App() {
+  const [UserId, setUserId] = useState()
   return (
     <div className="App">
       <Routes>
-        <Route path='/' element={<UserLogin />} />
-        <Route path='/users/:id' element={<UserPage />} />
+        <Route path='/' element={<UserLogin setUserId={setUserId} />} />
+        <Route path='/login/createAccount' element={<CreateAccountPage />} />
+        <Route path='/login/accountCreated' element={<AccountCreated />} />
+        <Route path='/users/userAccount/:id' element={<UserPage userId={UserId} />} />
       </Routes>
     </div>
   );
@@ -16,13 +22,3 @@ function App() {
 
 export default App;
 
-
-
-//  const router = createBrowserRouter(
-//    createRoutesFromElements(
-//     <Route path="/" element={<Layout />}  errorElement={<ErrorPage/>}>
-//     <Route path="/createAccount" element={<CreateAccountPage />} />
-//     <Route path="/login" element={<LoginPage />} />  
-//     </Route>
-//    )
-//  );
