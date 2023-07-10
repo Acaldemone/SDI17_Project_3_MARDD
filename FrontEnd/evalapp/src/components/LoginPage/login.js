@@ -13,7 +13,7 @@ export default function UserLogin() {
 
   const signIn = async () => {
     try {
-      const response = await fetch('https://localhost:8080/login/validation', {
+      const response = await fetch('http://localhost:8080/login/validation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -45,8 +45,8 @@ export default function UserLogin() {
           Welcome to the DOD Evaluation System!
         </h2>
         {token && <p>User Authentication Failed</p>}
-        <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input placeholder="Email" value={email} type="email" onChange={(e) => setEmail(e.target.value)} />
+        <input placeholder="Password" value={password} type="password" onChange={(e) => setPassword(e.target.value)} />
         <Button onClick={() => signIn()}>Login</Button>
         <div className="flex">
           <p className="mr-2">Don't have an account?</p>

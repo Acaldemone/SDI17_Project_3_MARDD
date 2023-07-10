@@ -6,6 +6,7 @@ import React, {useState} from 'react';
 import './index.css'
 import {Routes, Route } from 'react-router-dom'
 
+
 function App() {
   const [UserId, setUserId] = useState()
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path='/' element={<UserLogin setUserId={setUserId} />} />
         <Route path='/login/createAccount' element={<CreateAccountPage />} />
         <Route path='/login/accountCreated' element={<AccountCreated />} />
-        <Route path='/users/userAccount/:id' element={<UserPage userId={UserId} />} />
+        <Route path='/users/userAccount/:id/*' element={<UserPage userId={UserId} />} />
       </Routes>
     </div>
   );
