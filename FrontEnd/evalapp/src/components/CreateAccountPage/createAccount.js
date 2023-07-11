@@ -24,7 +24,7 @@ const CreateAccountPage = () => {
         console.log('password', password);
         if(confPass === password){
             const hashedPass = bcrypt.hashSync(password, 10);
-            await fetch('http://localhost:8080/register/createUser', {
+            await fetch('https://localhost:8080/register/createUser', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

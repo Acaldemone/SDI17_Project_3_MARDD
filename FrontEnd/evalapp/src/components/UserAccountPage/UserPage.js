@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import Supervisor from '../Supervisor/Supervisor.js'
 import NonSupervisor from '../NonSupervisor/NonSupervisor.js'
-import { Routes, Route, Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import { Card, Button } from 'flowbite-react';
 
 export default function UserPage() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,7 +26,10 @@ export default function UserPage() {
             }
         })
         .then(res => res.json())
-        .then(data => setUser(data))
+        .then(data => {
+          setUser(data)
+          setLoading(false)
+        })
         .catch(err => {
             setError(err.message);
         });
@@ -34,29 +38,46 @@ export default function UserPage() {
     if (error) {
         return <p>{error}</p>
     }
-    if (!user) {
+    if (loading) {
         return <p>Loading....</p>
     }
 
     if(user[0].role_id === 1){
-        return(
-            <div>
-            <Card className="flex justify-center items-center h-40">
-            <h1 className="text-6xl font-extrabold dark:text-white text-center mb-5">Welcome {user[0].first_name} {user[0].last_name}</h1>
-            <Button onClick={() => navigate('/', {replace:true})}>Sign Out</Button>
-          </Card>
-        <NonSupervisor user={user[0]} />
+      return (
+        <div>
+            <Card className="w-full h-60">
+              <div className="flex justify-between">
+              <img src="../../Images/DODLogo.jpeg" alt="DODLogo" className="w-48 h-auto" />
+                <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
+                <div className="flex items-center">
+                    <Button onClick={() => navigate(`/users/userAccount/${Cookies.get('id')}`)}>Home Page</Button>
+                    <Button onClick={() => {Cookies.remove('token'); Cookies.remove('id'); navigate('/', {replace:true})}} className="ml-10">Sign Out</Button>
+                    </div>
+                </div>
+            </Card>
+            <NonSupervisor user={user[0]} />
         </div>
-        )
+    )
+
+
+
     } else {
-        return (
+          return (
             <div>
-            <Card className="flex justify-center items-center h-40">
-            <h1 className="text-6xl font-extrabold dark:text-white text-center mb-5">Welcome {user[0].first_name} {user[0].last_name}</h1>
-            <Button onClick={() => navigate('/', {replace:true})}>Sign Out</Button>
-          </Card>
-            <Supervisor user={user[0]} />
+                <Card className="w-full h-60">
+                  <div className="flex justify-between">
+                  <img src="../../Images/DODLogo.jpeg" alt="DODLogo" className="w-48 h-auto" />
+                    <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
+                    <div className="flex items-center">
+                        <Button onClick={() => navigate(`/users/userAccount/${Cookies.get('id')}`)}>Home Page</Button>
+                        <Button onClick={() => {Cookies.remove('token'); Cookies.remove('id'); navigate('/', {replace:true})}} className="ml-10">Sign Out</Button>
+                        </div>
+                    </div>
+                </Card>
+                <Supervisor user={user[0]} />
+
             </div>
-        )
+          )
+
     }
 }

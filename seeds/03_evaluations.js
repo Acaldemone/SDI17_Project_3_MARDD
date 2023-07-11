@@ -17,7 +17,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to improve skills',
       passing_fitness: true,
       fitness_comments: 'Met fitness requirements',
-      eval_date: '2022-07-01',
+      eval_date: '2022-05-01',
       user_id: BigInt(1234567890),
     },
     {
@@ -31,7 +31,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to improve skills',
       passing_fitness: true,
       fitness_comments: 'Met fitness requirements',
-      eval_date: '2022-10-22',
+      eval_date: '2022-04-22',
       user_id: BigInt(1234567891),
       supervisor_id: BigInt(1234567890)
     },
@@ -46,7 +46,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to attend college courses',
       passing_fitness: false,
       fitness_comments: 'Did not meet fitness requirements',
-      eval_date: '2022-07-01',
+      eval_date: '2022-08-01',
       user_id: BigInt(1234567892),
       supervisor_id: BigInt(1234567890)
     },
@@ -61,7 +61,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to improve skills',
       passing_fitness: true,
       fitness_comments: 'Met fitness requirements',
-      eval_date: '2022-07-07',
+      eval_date: '2022-12-07',
       user_id: BigInt(1234567893),
       supervisor_id: BigInt(1234567890)
     }
