@@ -15,7 +15,7 @@ exports.up = function(knex) {
     table.string('self_improvement_comments', 500);
     table.boolean('passing_fitness');
     table.string('fitness_comments', 100)
-    table.date('last_eval_date');
+    table.date('eval_date');
     table.bigint('user_id');
     table.foreign('user_id').references('users.id');
     table.bigint('supervisor_id');

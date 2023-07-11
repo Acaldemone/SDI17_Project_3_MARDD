@@ -1,6 +1,6 @@
 /**
  * @param { import("knex").Knex } knex
- * @returns { Promise<void> } 
+ * @returns { Promise<void> }
  */
 exports.seed = async function(knex) {
   // Deletes ALL existing entries
@@ -17,7 +17,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to improve skills',
       passing_fitness: true,
       fitness_comments: 'Met fitness requirements',
-      last_eval_date: '2022-07-01',
+      eval_date: '2022-07-01',
       user_id: BigInt(1234567890),
     },
     {
@@ -31,7 +31,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to improve skills',
       passing_fitness: true,
       fitness_comments: 'Met fitness requirements',
-      last_eval_date: '2022-07-01',
+      eval_date: '2022-10-22',
       user_id: BigInt(1234567891),
       supervisor_id: BigInt(1234567890)
     },
@@ -46,7 +46,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to attend college courses',
       passing_fitness: false,
       fitness_comments: 'Did not meet fitness requirements',
-      last_eval_date: '2022-07-01',
+      eval_date: '2022-07-01',
       user_id: BigInt(1234567892),
       supervisor_id: BigInt(1234567890)
     },
@@ -61,7 +61,7 @@ exports.seed = async function(knex) {
       self_improvement_comments: 'Showed willingness to improve skills',
       passing_fitness: true,
       fitness_comments: 'Met fitness requirements',
-      last_eval_date: '2022-07-01',
+      eval_date: '2022-07-07',
       user_id: BigInt(1234567893),
       supervisor_id: BigInt(1234567890)
     }

@@ -6,7 +6,6 @@ import React, {useState} from 'react';
 import './index.css'
 import {Routes, Route } from 'react-router-dom'
 
-
 function App() {
   const [UserId, setUserId] = useState()
   return (
@@ -22,4 +21,3 @@ function App() {
 }
 
 export default App;
-

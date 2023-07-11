@@ -124,18 +124,18 @@ app.get('/users/supervisor/:id', async (req, res) => {
   }
 })
 
-app.get('/users/troops/:id'), async (req, res) => {
+app.get('/users/troops/:id', async (req, res) => {
   const {id} = req.params;
 
   try{
     const troopList = await knex ('users')
-    .select("last_name, first_name, id")
+    .select("last_name", "first_name", "id")
     .where('users.supervisor_id', BigInt(id))
     res.status(201).json(troopList)
   }catch(err){
-    res.status(500).json({message:"Failed to fetch troop data"})
+    res.status(500).json({message:"Error retrieving"})
   }
-}
+})
 
 app.post('/users/evals', async (req, res) => {
   const {work_performance,

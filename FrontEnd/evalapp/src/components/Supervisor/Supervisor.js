@@ -1,51 +1,34 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useParams } from 'react-router-dom';
 import { Card, Button} from 'flowbite-react';
 import Dropdown from './Dropdown.js'
+import TroopPage from '../TroopPage/TroopPage.js'
+import EvalHistory from '../EvalHistory/EvalHistory.js'
 
-export default function Supervisor({ user }) {
-  const [evalList, setEvalList] = useState([]);
-  const [troops, setTroops]= useState([]);
+const UserContent = ({ evalList, troop }) => {
+  const [showHome, setShowHome] = useState(true);
 
-  useEffect(() => {
-    fetch(`http://localhost:8080/users/evals/${user.id}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setEvalList(data);
-      })
-      .catch(error => {
-        console.error("Error fetching evaluation list:", error);
-      });
+  const handleClick = () => {
+    setShowHome(false);
+  };
 
-      fetch(`http://localhost:8080/users/troops/${user.id}`)
+  if (evalList.length < 1) {
+    return <p>Fetching data</p>;
+  }
 
-  }, [user.id]);
+  const lastEvalDate = new Date(evalList[0].last_eval_date);
+  const evalDueDate = new Date(evalList[0].last_eval_date);
+  evalDueDate.setFullYear(evalDueDate.getFullYear() + 1);
 
-  const UserContent = () => {
-    const [showHome, setShowHome] = useState(true);
-
-    const handleClick = () => {
-      setShowHome(false);
-    };
-
-    if (evalList.length < 1) {
-      return <p>Fetching data</p>;
-    }
-
-    const lastEvalDate = new Date(evalList[0].last_eval_date);
-    const evalDueDate = new Date(evalList[0].last_eval_date);
-    evalDueDate.setFullYear(evalDueDate.getFullYear() + 1);
-
-    return (
-      <div>
-        {showHome && (
-          <div>
-            {evalList.length >= 1 && (
-              <div className='flex justify-center h-screen'>
-                <div className='flex evalContainer mt-20 h-fit'>
-                  <Card>
-                    <h2 className="text-4xl font-extrabold dark:text-white text-center mb-5">Recent Evaluation</h2>
+  return (
+    <div>
+      {showHome && (
+        <div>
+          {evalList.length >= 1 && (
+            <div className='flex justify-center h-screen'>
+              <div className='flex evalContainer mt-20 h-fit'>
+                <Card>
+                <h2 className="text-4xl font-extrabold dark:text-white text-center mb-5">Recent Evaluation</h2>
                     <p>Ratee Role: Supervisory</p>
                     <p>DOD ID Number: {evalList[0].user_id}</p>
                     <p>Work performance rating: {evalList[0].work_performance}</p>
@@ -59,32 +42,56 @@ export default function Supervisor({ user }) {
                     <p>Fitness Test: {evalList[0].passing_fitness ? 'Pass' : 'Fail'}</p>
                     <p>Fitness comments: {evalList[0].fitness_comments}</p>
                     <p>Date of evaluation: {lastEvalDate.toDateString()}</p>
-                  </Card>
-                </div>
-                <div className='ml-40 mt-20 h-screen'>
-                  <Card className='mb-10'>
-                    <p>Last Evaluation on: {lastEvalDate.toDateString()}</p>
-                    <p>Next Evaluation on: {evalDueDate.toDateString()}</p>
-                  </Card>
-                  <Link to="/users/userAccount/EvalHistory">
-                    <Button onClick={handleClick}>Evaluation History</Button>
-                  </Link>
-                  <Dropdown />
-                </div>
+                </Card>
               </div>
-            )}
-          </div>
-        )}
-        <Routes>
-          <Route path="/users/userAccount/EvalHistory" element={<evalHistory evalList={evalList} />} />
-        </Routes>
-      </div>
-    );
-  };
+              <div className='ml-40 mt-20 h-screen'>
+                <Card className='mb-10'>
+                  <p>Last Evaluation on: {lastEvalDate.toDateString()}</p>
+                  <p>Next Evaluation on: {evalDueDate.toDateString()}</p>
+                </Card>
+                <Link to="EvalHistory">
+                  <Button onClick={() => handleClick()}>Evaluation History</Button>
+                </Link>
+                <Dropdown troop={troop} handleClick = {handleClick}/>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function Supervisor({ user }) {
+  const [evalList, setEvalList] = useState([]);
+  const [troop, setTroop] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/users/evals/${user.id}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setEvalList(data);
+      })
+      .catch(error => {
+        console.error("Error fetching evaluation list:", error);
+      });
+
+    fetch(`http://localhost:8080/users/troops/${user.id}`)
+      .then(res => res.json())
+      .then(data => setTroop(data))
+      .catch(error => {
+        console.error("Error fetching your troops:", error);
+      });
+  }, [user.id]);
 
   return (
     <div>
-      <UserContent />
+      <Routes>
+        <Route path='/' element={<UserContent evalList={evalList} troop={troop} />} />
+        <Route path='EvalHistory' element={<EvalHistory evalList={evalList} />} />
+        <Route path='troop/:id/*' element={<TroopPage />} />
+      </Routes>
     </div>
   );
 }
