@@ -9,18 +9,18 @@ const port = 8080;
 
 require('dotenv').config();
 
-const options = {
-  key: fs.readFileSync('./key.pem'),
-  cert: fs.readFileSync('./cert.pem')
-};
+// const options = {
+//   key: fs.readFileSync('./key.pem'),
+//   cert: fs.readFileSync('./cert.pem')
+// };
 
 app.use(express.json());
 app.use(cors())
 const knex = require('knex')(require('../../knexfile.js') ['development'])
 
-const server = https.createServer(options, app)
+// const server = https.createServer(options, app)
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log('Your Knex and Express application are running successfully!')
 })
 
@@ -101,10 +101,39 @@ app.get('/users/evals/:id', async (req, res) => {
     .join("evaluations", "users.id", "=", "evaluations.user_id")
     .select("*")
     .where("users.id", BigInt(id))
+    .orderBy('evaluations.id', 'desc')
     res.json(userEvals)
   } catch (err) {
     console.log(err)
     res.status(500).json({message:"Error retrieving user data"})
+  }
+})
+
+
+
+app.get('/users/supervisor/:id', async (req, res) => {
+  const {id} = req.params;
+
+  try{
+    const supervisorInfo = await knex ('users')
+    .select("*")
+    .where('users.id', BigInt(id))
+    res.status(201).json(supervisorInfo)
+  }catch(err){
+    res.status(500).json({message:"Error retrieving"})
+  }
+})
+
+app.get('/users/troops/:id', async (req, res) => {
+  const {id} = req.params;
+
+  try{
+    const troopList = await knex ('users')
+    .select("last_name", "first_name", "id")
+    .where('users.supervisor_id', BigInt(id))
+    res.status(201).json(troopList)
+  }catch(err){
+    res.status(500).json({message:"Error retrieving"})
   }
 })
 
