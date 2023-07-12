@@ -46,6 +46,7 @@ const UserContent = ({ evalList, troop }) => {
               </div>
               <div className='ml-40 mt-20 h-screen'>
                 <Card className='mb-10'>
+                {/* <p>Supervisor: {supervisor[0].first_name} {supervisor[0].last_name}</p> */}
                   <p>Last Evaluation on: {lastEvalDate.toDateString()}</p>
                   <p>Next Evaluation on: {evalDueDate.toDateString()}</p>
                 </Card>
@@ -89,8 +90,8 @@ export default function Supervisor({ user }) {
     <div>
       <Routes>
         <Route path='/' element={<UserContent evalList={evalList} troop={troop} />} />
-        <Route path='EvalHistory' element={<EvalHistory evalList={evalList} />} />
-        <Route path='troop/:id/*' element={<TroopPage />} />
+        <Route path='EvalHistory' element={<EvalHistory evalList={evalList} user={user} />} />
+        <Route path='troop/:id/*' element={<TroopPage evalList={evalList}/>} />
       </Routes>
     </div>
   );

@@ -109,6 +109,32 @@ app.get('/users/evals/:id', async (req, res) => {
   }
 })
 
+app.get('/users/evals/latest/:id', async(req,res) => {
+  const {id} = req.params;
+
+  try{
+    const latestEval = await knex('users')
+    .join("evaluations", "users.id", "=", "evaluations.user_id")
+    .select("*")
+    .where("users.id", BigInt(id))
+    .orderBy('evaluations.id', 'desc')
+    .first()
+
+    const evalHistory = await knex('evaluations')
+    .select("id", "eval_date")
+    .where("evaluations.user_id", BigInt(id))
+    .orderBy("evaluations.id", 'desc')
+    .offset(1)
+
+    res.status(200).json({ latestEval, evalHistory });
+  }
+  catch(error){
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while processing your request.' });
+  }
+});
+
+
 
 
 app.get('/users/supervisor/:id', async (req, res) => {
@@ -148,7 +174,7 @@ app.post('/users/evals', async (req, res) => {
     self_improvement_comments,
     passing_fitness,
     fitness_comments,
-    last_eval_date,
+    eval_date,
     user_id,
     supervisor_id} = req.body;
 
@@ -164,7 +190,7 @@ app.post('/users/evals', async (req, res) => {
         self_improvement_comments: self_improvement_comments,
         passing_fitness: passing_fitness,
         fitness_comments: fitness_comments,
-        last_eval_date: last_eval_date,
+        eval_date: eval_date,
         user_id: BigInt(user_id),
         supervisor_id: BigInt(supervisor_id)
       };
@@ -188,7 +214,7 @@ app.patch('/users/evals/:id', async (req, res) => {
     self_improvement_comments,
     passing_fitness,
     fitness_comments,
-    last_eval_date,
+    eval_date,
     supervisor_id} = req.body;
 
   try {
@@ -204,7 +230,7 @@ app.patch('/users/evals/:id', async (req, res) => {
     if (self_improvement_comments) evalToUpdate.self_improvement_comments = self_improvement_comments;
     if (passing_fitness) evalToUpdate.passing_fitness = passing_fitness;
     if (fitness_comments) evalToUpdate.fitness_comments = fitness_comments;
-    if (last_eval_date) evalToUpdate.last_eval_date = last_eval_date;
+    if (eval_date) evalToUpdate.last_eval_date = eval_date;
     if (supervisor_id) evalToUpdate.supervisor_id = supervisor_id;
 
     const updatedEval = await knex('evaluations')

@@ -87,7 +87,8 @@ export default function NonSupervisor({ user }) {
     <div>
       <Routes>
         <Route path='/' element={<UserContent evalList={evalList} supervisor={supervisor} />} />
-        <Route path='EvalHistory' element={<EvalHistory evalList={evalList} />} />
+        <Route path='EvalHistory' element={<EvalHistory evalList={evalList} user={user} />} />
+
       </Routes>
     </div>
   );
