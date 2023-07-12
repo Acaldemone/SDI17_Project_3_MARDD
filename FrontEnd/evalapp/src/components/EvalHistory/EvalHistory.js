@@ -2,37 +2,42 @@ import { useEffect, useState } from "react";
 import { Card, Button, Label} from 'flowbite-react';
 
 const EvalHistory =({evalList, latestEval, user}) => {
-    const recentEval = latestEval
     const[selectedEvaluation, setSelectedEvaluation] = useState();
+    const[selectedId, setSelectedId] = useState(latestEval.id)
 
 
     const handleEvaluationSelect = (evaluations) => {
-        setSelectedEvaluation(evaluations)
+        setSelectedId(evaluations)
     }
 
-    console.log(evalList)
+
     useEffect(() => {
-        if (selectedEvaluation !== null) {
-        fetch(`http://localhost:8080/users/evals/${selectedEvaluation.id}`)
+
+        if (latestEval) {
+        setSelectedId(latestEval.id);
+
+        if(selectedId){
+        fetch(`http://localhost:8080/users/evals/target/${selectedId}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            setSelectedEvaluation(data);
+            setSelectedEvaluation(data[0]);
         })
         .catch(error => {
             console.error("Error fetching evaluation details:", error);
         });
-            }
-        },[]);
+    }
+    }
+
+        },[selectedId, latestEval]);
 
         return (
             <div className="flex h-screen mt-20">
-                <div>
-                <Card className="w-fit mr-80 ml-60 flex">
-                <ul>
+                <div className="h-fit">
+                <Card className="mr-80 ml-60">
+                <ul className="flex flex-col gap-3">
                     {evalList.map((evaluations) =>(
-                        <li key={evaluations.id} onClick = {() => handleEvaluationSelect(evaluations)}>
-                            <Button className='mb-10'>Evaluation Date: {new Date(evaluations.eval_date).toDateString()}</Button>
+                        <li key={evaluations.id} onClick = {() => handleEvaluationSelect(evaluations.id)}>
+                            <Button>Evaluation Date: {new Date(evaluations.eval_date).toDateString()}</Button>
                         </li>
                     ))}
                 </ul>

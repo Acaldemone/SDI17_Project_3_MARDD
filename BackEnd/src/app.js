@@ -109,6 +109,23 @@ app.get('/users/evals/:id', async (req, res) => {
   }
 })
 
+app.get('/users/evals/target/:id', async (req, res) => {
+  const {id} = req.params;
+
+  try{
+    const targetEval = await knex('users')
+    .join("evaluations", "users.id", "=", "evaluations.user_id")
+    .select("*")
+    .where("evaluations.id", id )
+
+    delete targetEval.password
+
+    res.status(200).json(targetEval)
+  }catch(err){
+    res.status(500).json({message:"Failed to get target eval"})
+  }
+})
+
 app.get('/users/evals/latest/:id', async(req,res) => {
   const {id} = req.params;
 
@@ -124,7 +141,6 @@ app.get('/users/evals/latest/:id', async(req,res) => {
     .select("id", "eval_date")
     .where("evaluations.user_id", BigInt(id))
     .orderBy("evaluations.id", 'desc')
-    .offset(1)
 
     res.status(200).json({ latestEval, evalHistory });
   }
@@ -277,4 +293,3 @@ app.post('/login/validation', async (req, res) => {
 });
 
 // app.delete (STRETCH GOAL for adding an adminstrator role)
-

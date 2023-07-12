@@ -1,18 +1,20 @@
-import React, { useState } from "react";
-import { Card, Button, Label, TextInput } from 'flowbite-react';
+import React, { useState, useEffect } from "react";
+import { Card, Button, Label} from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
 
 const currentDate = () => {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed in JavaScript
+  const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   return formattedDate
 }
 
 const EvaluationForm = ({troopData}) => {
-  const [rateeRole, setRateeRole] = useState("");
+  const [rateeRole, setRateeRole] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [workPerformanceRating, setWorkPerformanceRating] = useState(0);
   const [workPerformanceComments, setWorkPerformanceComments] = useState("");
   const [followershipLeadershipRating, setFollowershipLeadershipRating] = useState(0);
@@ -24,11 +26,20 @@ const EvaluationForm = ({troopData}) => {
   const [fitness, setFitness] = useState();
   const [fitnessComments, setFitnessComments] = useState("");
   const [EvalDate, setEvalDate] = useState(currentDate());
-  const [userId, setUserId] = useState(troopData[0].user_id);
-  const [supervisorId, setSupervisorId] = useState(troopData[0].supervisor_id);
+  const [userId, setUserId] = useState(null);
+  const [supervisorId, setSupervisorId] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false)
 
 
+  useEffect(() => {
+    if(troopData){
+      setRateeRole(troopData[0].role_id);
+      setUserId(troopData[0].user_id);
+      setSupervisorId(troopData[0].supervisor_id);
+      setLastName(troopData[0].last_name);
+      setFirstName(troopData[0].first_name);
+    }
+  }, [troopData])
 
   const navigate = useNavigate();
 
@@ -79,7 +90,6 @@ const EvaluationForm = ({troopData}) => {
       body: JSON.stringify(updateUserData)
     })
     if (response2.ok) {
-      console.log('Evaluation has been submitted.');
       setRateeRole("");
       setWorkPerformanceRating(0);
       setWorkPerformanceComments("");
@@ -102,11 +112,11 @@ const EvaluationForm = ({troopData}) => {
   return (
     <div className="flex justify-center">
             {isOpenModal && (
-        <div className="flex justify-center bg-zinc-200  fixed insert-0 z-50">
-        <div classname="flex h-screen justify-center items-center">
+        <div className="flex justify-center opacity-80 bg-zinc-200  fixed insert-0 z-50">
+        <div className="flex h-screen w-screen justify-center items-center">
             <div className="flex flex-col justify-center items-center bg-white py-12 px-24 border-4 border-sky-500 rounded-xl">
                 <div className="flex text-lg text-zinc-600 mb-10">Evaluation Has Been Submitted</div>
-                <div ClassName="flex">
+                <div className="flex">
                     <Button onClick={handleClick} className="rounded px-4 py-2 text-white">OK</Button>
                 </div>
             </div>
@@ -115,19 +125,11 @@ const EvaluationForm = ({troopData}) => {
       )}
       <form onSubmit={handleSubmit} className="flex flex-row gap-4 mt-40">
         <Card className="flex flex-col items-center mr-10">
-          <h1 className="text-center">{troopData[0].last_name}, {troopData[0].first_name} Evaluation</h1>
+          <h1 className="text-center">{lastName}, {firstName} Evaluation</h1>
           <div>
           <div className="mb-4">
                       <Label htmlFor="ratee_role" value="Ratee Role"/>
-                      <TextInput
-                          id="ratee_role"
-                          value={rateeRole}
-                          onChange={(e) => setRateeRole(e.target.value)}
-                          placeholder="Enter ratee role"
-                          className="mt-2"
-                          type="text"
-                          required
-                      />
+                      <p>{rateeRole === 1 ? 'Non-Supervisory' : 'Supervisory'}</p>
                   </div>
                   <div className="mb-4">
                   <Label htmlFor="default-range" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Work Performance Rating</Label>
@@ -291,7 +293,7 @@ const EvaluationForm = ({troopData}) => {
         </Card>
       </form>
 
-      <Card className="h-fit ml-20">
+      <Card className="h-fit ml-20 mt-40">
         <div>
           <Label htmlFor="user_id" value="Ratee DOD ID Number" />
           <p>{userId}</p>

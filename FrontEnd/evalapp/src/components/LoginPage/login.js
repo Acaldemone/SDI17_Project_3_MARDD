@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../index.css';
 import React, { useState } from 'react';
 import Cookies from 'js-cookie'
+import dodLogo from '../Images/DODLogo.jpeg';
+
 
 export default function UserLogin() {
   const Navigate = useNavigate();
@@ -40,7 +42,7 @@ export default function UserLogin() {
   return (
     <div className="flex justify-center items-center h-screen">
       <Card className="max-w-lg flex flex-col items-center">
-        <img src="./Images/DODLogo.jpeg" alt="DODLogo" className="w-48 h-auto mx-auto mb-4" />
+        <img src={dodLogo} alt="DODLogo" className="w-48 h-auto mx-auto mb-4" />
         <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Welcome to the DOD Evaluation System!
         </h2>

@@ -6,27 +6,33 @@ import EvaluationForm from '../Evaluation/Evaluation.js'
 
 
 const TroopEvals = ({ troopData, createRecord }) => {
-//console.log(troopData)
   const[selectedEvaluation, setSelectedEvaluation] = useState(null);
   const handleEvaluationSelect = (evaluations) => {
     setSelectedEvaluation(evaluations)
 }
+  useEffect(() => {
+    if(troopData){
+      setSelectedEvaluation(troopData[0])
+    }
+  }, [troopData])
+
+
 
   return (
-    <div className="flex">
+    <div className="flex justify-center items-center">
         <div>
           <Card>
             <ul>
-            <h1>Evaluations for</h1>
+            <h1>Evaluations for:</h1>
             <h2>{troopData?.[0]?.last_name}, {troopData?.[0]?.first_name}</h2>
               {troopData && troopData.map((evaluations) => (
-                <li key={evaluations.user_id} onClick = {() => handleEvaluationSelect(evaluations)}>
-                  <Button className='mb-10'>Evaluation Date: {troopData?.[0]?.last_eval_date}</Button>
+                <li key={evaluations.id} onClick = {() => handleEvaluationSelect(evaluations)}>
+                  <Button className='mb-10'>Evaluation Date: {evaluations.eval_date}</Button>
                 </li>
               ))}
                 </ul>
           </Card>
-          <Button className="mt-5" onClick={createRecord}>Create Eval Record</Button>
+          <Button className="mt-5 ml-20" onClick={createRecord}>Create Eval Record</Button>
         </div>
         {selectedEvaluation && (
         <div>
@@ -59,11 +65,11 @@ function TroopPage() {
     const { id } = useParams();
     const [troopData, setTroopData] = useState();
     const navigate = useNavigate()
-    // console.log(evalList)
+
     const createRecord = () => {
       navigate('CreateRecord')
     }
-      //console.log('troop data', troopData)
+
     useEffect(() => {
         fetch(`http://localhost:8080/users/evals/${id}`)
             .then(res => res.json())
@@ -71,9 +77,8 @@ function TroopPage() {
             .catch(error => {
               console.error("Error fetching evaluation details:", error);
           });
-    }, [])
+    }, [id])
 
-    //console.log('troop data2', troopData?.[0]?.evalList)
 
     return (
         <div>

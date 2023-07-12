@@ -4,6 +4,8 @@ import Supervisor from '../Supervisor/Supervisor.js'
 import NonSupervisor from '../NonSupervisor/NonSupervisor.js'
 import {useNavigate} from 'react-router-dom';
 import { Card, Button } from 'flowbite-react';
+import dodLogo from '../Images/DODLogo.jpeg';
+
 
 export default function UserPage() {
     const [user, setUser] = useState(null);
@@ -47,7 +49,7 @@ export default function UserPage() {
         <div>
             <Card className="w-full h-60">
               <div className="flex justify-between">
-              <img src="../../Images/DODLogo.jpeg" alt="DODLogo" className="w-48 h-auto" />
+              <img src={dodLogo} alt="DODLogo" className="w-48 h-auto" />
                 <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
                 <div className="flex items-center">
                     <Button onClick={() => navigate(`/users/userAccount/${Cookies.get('id')}`)}>Home Page</Button>
@@ -66,7 +68,7 @@ export default function UserPage() {
             <div>
                 <Card className="w-full h-60">
                   <div className="flex justify-between">
-                  <img src="../../Images/DODLogo.jpeg" alt="DODLogo" className="w-48 h-auto" />
+                  <img src={dodLogo} alt="DODLogo" className="w-48 h-auto" />
                     <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
                     <div className="flex items-center">
                         <Button onClick={() => navigate(`/users/userAccount/${Cookies.get('id')}`)}>Home Page</Button>
