@@ -5,6 +5,9 @@ import NonSupervisor from '../NonSupervisor/NonSupervisor.js'
 import {useNavigate} from 'react-router-dom';
 import { Card, Button } from 'flowbite-react';
 import dodLogo from '../Images/DODLogo.jpeg';
+import jurrasic from '../Images/jurassic-park-ah.gif';
+import LoadingScreen from '../Spinner/Spinner.js'
+
 
 
 export default function UserPage() {
@@ -18,7 +21,7 @@ export default function UserPage() {
         const userId = Cookies.get('id');
 
         if (!token || !userId) {
-            setError('Unauthorized attempt to access a page!');
+            setError(jurrasic);
             return;
         }
 
@@ -38,16 +41,21 @@ export default function UserPage() {
     }, [])
 
     if (error) {
-        return <p>{error}</p>
+        console.log(error)
+        return (
+        <div className="h-screen flex flex-col">
+        <img src={error} alt="error" />
+        </div>
+        )
     }
     if (loading) {
-        return <p>Loading....</p>
+        return <LoadingScreen />
     }
 
     if(user[0].role_id === 1){
       return (
         <div>
-            <Card className="w-full h-60">
+            <Card>
               <div className="flex justify-between">
               <img src={dodLogo} alt="DODLogo" className="w-48 h-auto" />
                 <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
@@ -57,27 +65,38 @@ export default function UserPage() {
                     </div>
                 </div>
             </Card>
+            <div className="mb-2">
             <NonSupervisor user={user[0]} />
+            </div>
+            <div>
+            <Card className="h-fit mx-0 px-0"><p className="h-fit mx-0 px-0">&copy; 2023 Da Cool Club. All rights reserved.</p></Card>
+            </div>
         </div>
     )
 
 
 
     } else {
-          return (
-            <div>
-                <Card className="w-full h-60">
-                  <div className="flex justify-between">
-                  <img src={dodLogo} alt="DODLogo" className="w-48 h-auto" />
-                    <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
-                    <div className="flex items-center">
-                        <Button onClick={() => navigate(`/users/userAccount/${Cookies.get('id')}`)}>Home Page</Button>
-                        <Button onClick={() => {Cookies.remove('token'); Cookies.remove('id'); navigate('/', {replace:true})}} className="ml-10">Sign Out</Button>
+        return (
+            <div className="flex flex-col">
+                <div>
+                    <Card>
+                        <div className="flex justify-between">
+                        <img src={dodLogo} alt="DODLogo" className="w-48 h-auto" />
+                        <h1 className="text-6xl font-extrabold dark:text-white mb-5 flex items-center">Welcome {user[0].first_name} {user[0].last_name}</h1>
+                        <div className="flex items-center">
+                            <Button onClick={() => navigate(`/users/userAccount/${Cookies.get('id')}`)}>Home Page</Button>
+                            <Button onClick={() => {Cookies.remove('token'); Cookies.remove('id'); navigate('/', {replace:true})}} className="ml-10">Sign Out</Button>
                         </div>
                     </div>
-                </Card>
-                <Supervisor user={user[0]} />
-
+                    </Card>
+                </div>
+                <div className="mb-5">
+                    <Supervisor user={user[0]} />
+                </div>
+                <div>
+                    <Card className="h-fit mx-0 px-0"><p className="h-fit mx-0 px-0">&copy; 2023 Da Cool Club. All rights reserved.</p></Card>
+                </div>
             </div>
           )
 
