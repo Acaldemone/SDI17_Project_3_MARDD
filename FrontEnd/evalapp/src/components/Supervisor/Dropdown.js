@@ -9,8 +9,8 @@ function Dropdown({troop, handleClick}){
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const navigateToTroop = (id) => {
-    handleClick();
+  const navigateToTroop = (id, first, last) => {
+    handleClick(first, last);
     navigate(`troop/${id}`);
   };
 
@@ -27,7 +27,7 @@ function Dropdown({troop, handleClick}){
         <div id="listParent" className="bg-blue-500 absolute top-16 flex flex-col items-start rounded-lg p-2 w-40">
           {troop.map((e) => (
             <div key={e.id}>
-              <button  onClick={() => navigateToTroop(e.id)}>{e.last_name}, {e.first_name}</button>
+              <button  onClick={() => navigateToTroop(e.id, e.first_name, e.last_name)}>{e.last_name}, {e.first_name}</button>
             </div>
           ))}
         </div>

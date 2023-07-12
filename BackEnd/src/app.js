@@ -42,8 +42,7 @@ app.get('/users/:id', async (request, response) => {
 })
 
 app.post('/register/createUser', async (req, res) => {
-  const { id, last_name, first_name, email, password } = req.body;
-
+  const { id, last_name, first_name, email, role_id, password } = req.body;
   const hashedPass = await bcrypt.hashSync(password, 10)
   try {
     const newUser = {
@@ -51,12 +50,19 @@ app.post('/register/createUser', async (req, res) => {
       last_name: last_name,
       first_name: first_name,
       email: email,
-      password: hashedpass
+      role_id : role_id,
+      password : hashedPass,
+      supervisor_id: BigInt(1234567890)
     };
 
-    const addedUser = await knex('users')
+    let addedUser = await knex('users')
       .insert(newUser)
       .returning('*');
+
+    addedUser = addedUser.map(user => {
+      delete user.password;
+      return user;
+    });
 
     res.status(201).json(addedUser);
   } catch (err) {
@@ -129,7 +135,7 @@ app.get('/users/evals/target/:id', async (req, res) => {
 app.get('/users/evals/latest/:id', async(req,res) => {
   const {id} = req.params;
 
-  try{
+  try {
     const latestEval = await knex('users')
     .join("evaluations", "users.id", "=", "evaluations.user_id")
     .select("*")
@@ -142,13 +148,40 @@ app.get('/users/evals/latest/:id', async(req,res) => {
     .where("evaluations.user_id", BigInt(id))
     .orderBy("evaluations.id", 'desc')
 
-    res.status(200).json({ latestEval, evalHistory });
-  }
-  catch(error){
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while processing your request.' });
+    if(!latestEval || !evalHistory.length){
+      const latestEval = {
+        role_id: 1,
+        user_id: id,
+        work_performance: "",
+        work_performance_comments: "",
+        followership_leadership: "",
+        followership_leadership_comments: "",
+        professional_development:"",
+        professional_development_comments: "",
+        self_improvement: "",
+        self_improvement_comments: "",
+        passing_fitness: true,
+        fitness_comments: "",
+        eval_date: new Date(),
+        last_eval_date: new Date()
+      }
+
+      const evalHistory = [
+        {
+          id: 5,
+          eval_date: new Date()
+        }
+      ]
+      res.status(200).json({latestEval, evalHistory});
+    } else {
+      res.status(200).json({ latestEval, evalHistory });
+    }
+  } catch(error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while processing your request.' });
   }
 });
+
 
 
 
@@ -158,7 +191,7 @@ app.get('/users/supervisor/:id', async (req, res) => {
 
   try{
     const supervisorInfo = await knex ('users')
-    .select("*")
+    .select(["last_name", "first_name"])
     .where('users.id', BigInt(id))
     res.status(201).json(supervisorInfo)
   }catch(err){

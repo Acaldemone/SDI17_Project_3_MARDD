@@ -11,7 +11,7 @@ const currentDate = () => {
   return formattedDate
 }
 
-const EvaluationForm = ({troopData}) => {
+const EvaluationForm = ({troopData, id, supervisor_id}) => {
   const [rateeRole, setRateeRole] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -32,13 +32,20 @@ const EvaluationForm = ({troopData}) => {
 
 
   useEffect(() => {
+    try{
     if(troopData){
+      console.log(troopData)
       setRateeRole(troopData[0].role_id);
       setUserId(troopData[0].user_id);
       setSupervisorId(troopData[0].supervisor_id);
       setLastName(troopData[0].last_name);
       setFirstName(troopData[0].first_name);
     }
+  }catch{
+    setRateeRole(1)
+    setUserId(id)
+    setSupervisorId(supervisor_id)
+  }
   }, [troopData])
 
   const navigate = useNavigate();

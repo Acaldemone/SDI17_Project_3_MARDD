@@ -8,7 +8,7 @@ import {Routes, Route } from 'react-router-dom'
 function App() {
   const [UserId, setUserId] = useState()
   return (
-    <div className="App">
+    <div className="bg-blue-50">
       <Routes>
         <Route path='/' element={<UserLogin setUserId={setUserId} />} />
         <Route path='/login/createAccount' element={<CreateAccountPage />} />

@@ -6,15 +6,15 @@ exports.up = function(knex) {
   return knex.schema.createTable('evaluations', table => {
     table.increments();
     table.integer('work_performance');
-    table.string('work_performance_comments', 500);
+    table.string('work_performance_comments', 5000);
     table.integer('followership_leadership');
-    table.string('followership_leadership_comments', 500);
+    table.string('followership_leadership_comments', 5000);
     table.integer('professional_development');
-    table.string('professional_development_comments', 500);
+    table.string('professional_development_comments', 5000);
     table.integer('self_improvement');
-    table.string('self_improvement_comments', 500);
+    table.string('self_improvement_comments', 5000);
     table.boolean('passing_fitness');
-    table.string('fitness_comments', 100)
+    table.string('fitness_comments', 1000)
     table.date('eval_date');
     table.bigint('user_id');
     table.foreign('user_id').references('users.id');
